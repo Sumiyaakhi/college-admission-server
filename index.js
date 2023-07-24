@@ -1,4 +1,5 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
 const app = express();
 const cors = require('cors');
 require('dotenv').config()
@@ -24,13 +25,35 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
 const collegeInfoCollection = client.db("collegeAdmissionDB").collection("collegeInfo")
+const graduatesImageCollection = client.db("collegeAdmissionDB").collection("graduatesImage")
+const reviewsCollection = client.db("collegeAdmissionDB").collection("reviews")
+const researchPapersCollection = client.db("collegeAdmissionDB").collection("researchPaper")
 
 app.get('/collegeInfo', async(req,res) =>{
     const result = await collegeInfoCollection.find().toArray();
     res.send(result)
+})
+app.get('/graduatesImage', async(req,res) =>{
+    const result = await graduatesImageCollection.find().toArray();
+    res.send(result)
+})
+app.get('/reviews', async(req,res) =>{
+    const result = await reviewsCollection.find().toArray();
+    res.send(result)
+})
+app.get('/researchPapers', async(req,res) =>{
+    const result = await researchPapersCollection.find().toArray();
+    res.send(result)
+})
+
+app.get('/collegeInfo/:id',async(req,res)=>{
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)}
+
+    const result = await collegeInfoCollection.findOne(query);
 })
 
     // Send a ping to confirm a successful connection
